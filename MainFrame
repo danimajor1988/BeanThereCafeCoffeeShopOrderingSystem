@@ -234,4 +234,124 @@ public class MainFrame extends JFrame {
     }
 
     public void addDrinkToOrder() {
-    	
+    	Drink drink = buildCurrentDrinkFromUI();
+        currentOrder.addDrink(drink);
+        refreshReceiptPreview();
+    }
+
+    public void addPastryToOrder() {
+        String selected = (String) cmbPastry.getSelectedItem();
+        int qty = (Integer) spnPastryQty.getValue();
+        double price = 2.50;
+        String cleanName = "Croissant";
+
+        if (selected.startsWith("Chocolate Chip Cookie")) {
+            cleanName = "Chocolate Chip Cookie";
+            price = 1.00;
+        } else if (selected.startsWith("Cinnamon Roll")) {
+            cleanName = "Cinnamon Roll";
+            price = 2.50;
+        } else if (selected.startsWith("Bagel")) {
+            cleanName = "Bagel";
+            price = 1.00;
+        }
+
+        Pastry pastry = new Pastry(cleanName, qty, price);
+        currentOrder.addPastry(pastry);
+        refreshReceiptPreview();
+    }
+
+    public void checkout() {
+        applySelectedTip();
+        txtReceipt.setText(currentOrder.generateReceipt());
+        JOptionPane.showMessageDialog(this,
+                String.format("Order Complete!\nSubtotal: $%.2f\nTip: $%.2f\nFinal Total: $%.2f",
+                        currentOrder.calculateSubtotal(),
+                        currentOrder.calculateTip(),
+                        currentOrder.calculateTotal()),
+                "Checkout", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void clearOrder() {
+        currentOrder = new Order();
+        cmbCategory.setSelectedIndex(0);
+        updateDrinksForCategory();
+        cmbSize.setSelectedIndex(0);
+        cmbTemp.setSelectedIndex(0);
+        cmbMilk.setSelectedIndex(0);
+        spnExtraShots.setValue(0);
+        cmbSyrup.setSelectedIndex(0);
+        cmbColdFoam.setSelectedIndex(0);
+        chkWhippedCream.setSelected(false);
+        chkSprinkles.setSelected(false);
+        spnDrinkQty.setValue(1);
+        spnPastryQty.setValue(1);
+        cmbTip.setSelectedIndex(0);
+        txtReceipt.setText("");
+        calculateDrinkPrice();
+        updateImages();
+    }
+
+    private void applySelectedTip() {
+        String tipStr = ((String) cmbTip.getSelectedItem()).replace("%", "");
+        double tipPct = Double.parseDouble(tipStr) / 100.0;
+        currentOrder.setTipPercentage(tipPct);
+    }
+
+    private void refreshReceiptPreview() {
+        applySelectedTip();
+        txtReceipt.setText(currentOrder.generateReceipt());
+    }
+
+    private void updateImages() {
+        String category = (String) cmbCategory.getSelectedItem();
+        String drink = (String) cmbDrinkName.getSelectedItem();
+        if (drink == null) drink = "Espresso";
+        String temp = (String) cmbTemp.getSelectedItem();
+        String coldFoam = (String) cmbColdFoam.getSelectedItem();
+
+        String drinkFile = "hot_coffee.jpg";
+
+        if (!"None".equalsIgnoreCase(coldFoam)) {
+            drinkFile = "cold_foam.jpg";
+        } else if ("Matcha".equalsIgnoreCase(category)) {
+            drinkFile = "Hot".equalsIgnoreCase(temp) ? "hot_matcha.jpg" : "matcha.jpg";
+        } else if ("Green Tea".equalsIgnoreCase(drink)) {
+            drinkFile = "green_tea.jpg";
+        } else if ("Black Tea".equalsIgnoreCase(drink)) {
+            drinkFile = "black_tea.jpg";
+        } else {
+            drinkFile = "Iced".equalsIgnoreCase(temp) ? "cold_coffee.jpg" : "hot_coffee.jpg";
+        }
+
+        setScaledIcon(lblDrinkImage, "/images/" + drinkFile, drink);
+
+        String pastrySelected = (String) cmbPastry.getSelectedItem();
+        String pastryFile = "croissamt.jpg";
+
+        if (pastrySelected.startsWith("Chocolate Chip Cookie")) {
+            pastryFile = "choco_cookie.jpg";
+        } else if (pastrySelected.startsWith("Cinnamon Roll")) {
+            pastryFile = "cinnamon_rolls.jpg";
+        } else if (pastrySelected.startsWith("Bagel")) {
+            pastryFile = "bagel.jpg";
+        }
+
+        setScaledIcon(lblPastryImage, "/images/" + pastryFile, pastrySelected);
+    }
+
+    private void setScaledIcon(JLabel label, String resourcePath, String fallbackText) {
+        URL imgUrl = getClass().getResource(resourcePath);
+        if (imgUrl != null) {
+            ImageIcon icon = new ImageIcon(imgUrl);
+            int w = label.getWidth() > 0 ? label.getWidth() : 160;
+            int h = label.getHeight() > 0 ? label.getHeight() : 140;
+            Image scaled = icon.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
+            label.setIcon(new ImageIcon(scaled));
+            label.setText("");
+        } else {
+            label.setIcon(null);
+            label.setText(fallbackText);
+        }
+    }
+}
