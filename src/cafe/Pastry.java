@@ -17,6 +17,7 @@ public class Pastry {
 
     @Override
     public String toString() {
-        return String.format("%dx %s - $%.2f", quantity, pastryName, getItemTotal());
+        return String.format("%dx %s - $%.2f ($%.2f each)",
+                quantity, pastryName, getItemTotal(), unitPrice);
     }
 }
