@@ -701,11 +701,11 @@ public class MainFrame extends JFrame {
         pnlLeftColumn.add(pnlTipSection);
 
         // ----- ACTIONS section: checkout and clear-order buttons -----
+        // Two full-width buttons stacked vertically, matching the wide
+        // "Add drink/pastry" buttons in the forms above.
         JPanel pnlActions = new JPanel();
-        pnlActions.setLayout(new GridLayout(2, 2, 8, 8));
-
-        JLabel lblActionSpacerLeft = new JLabel("");
-        pnlActions.add(lblActionSpacerLeft);
+        pnlActions.setBorder(new EmptyBorder(8, 10, 8, 10));
+        pnlActions.setLayout(new GridLayout(2, 1, 8, 8));
 
         JButton btnCheckout = new JButton("Checkout");
         btnCheckout.addActionListener(new ActionListener() {
@@ -722,9 +722,6 @@ public class MainFrame extends JFrame {
             }
         });
         pnlActions.add(btnClear);
-
-        JLabel lblActionSpacerRight = new JLabel("");
-        pnlActions.add(lblActionSpacerRight);
 
         JPanel pnlActionsSection = new JPanel();
         pnlActionsSection.setBorder(BorderFactory.createTitledBorder("ACTIONS"));
