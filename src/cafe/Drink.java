@@ -46,6 +46,16 @@ public class Drink {
             price += 1.00;
         }
 
+        if ("Iced".equalsIgnoreCase(temperature)) {
+            price += 0.50;
+        } else if ("Frozen".equalsIgnoreCase(temperature)) {
+            price += 1.00;
+        }
+
+        if ("Oat".equalsIgnoreCase(milk)) {
+            price += 0.75;
+        }
+
         // Extra shots (+$1.00 each)
         price += extraShots * 1.00;
 
@@ -76,14 +86,27 @@ public class Drink {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%dx %s %s (%s) - $%.2f\n",
-                quantity, size, drinkName, temperature, getItemTotal()));
-        sb.append("   Milk: ").append(milk);
-        if (extraShots > 0) sb.append(" | +").append(extraShots).append(" shot(s)");
-        if (!"None".equalsIgnoreCase(syrup)) sb.append(" | Syrup: ").append(syrup);
-        if (!"None".equalsIgnoreCase(coldFoam)) sb.append(" | Cold Foam: ").append(coldFoam);
-        if (whippedCream) sb.append(" | Whipped Cream");
-        if (sprinkles) sb.append(" | Sprinkles (Free)");
+        double basePrice = "Tea".equalsIgnoreCase(drinkCategory) ? 2.00 : 3.00;
+        sb.append(String.format("%dx %s %s %s - $%.2f",
+                quantity, size, temperature, drinkName, getItemTotal()));
+        sb.append(String.format("\n   Base price: $%.2f", basePrice));
+        if ("Medium".equalsIgnoreCase(size)) sb.append("\n   Medium size: +$0.50");
+        if ("Large".equalsIgnoreCase(size)) sb.append("\n   Large size: +$1.00");
+        if ("Iced".equalsIgnoreCase(temperature)) sb.append("\n   Iced: +$0.50");
+        if ("Frozen".equalsIgnoreCase(temperature)) sb.append("\n   Frozen: +$1.00");
+        sb.append("\n   Milk: ").append(milk);
+        if ("Oat".equalsIgnoreCase(milk)) sb.append("\n   Oat milk: +$0.75");
+        if (extraShots > 0) {
+            sb.append(String.format("\n   %d extra shot(s): +$%.2f", extraShots, extraShots * 1.00));
+        }
+        if (syrup != null && !"None".equalsIgnoreCase(syrup)) {
+            sb.append("\n   ").append(syrup).append(" syrup: +$0.70");
+        }
+        if (coldFoam != null && !"None".equalsIgnoreCase(coldFoam)) {
+            sb.append("\n   ").append(coldFoam).append(" cold foam: +$1.00");
+        }
+        if (whippedCream) sb.append("\n   Whipped cream: +$0.50");
+        if (sprinkles) sb.append("\n   Sprinkles: Free");
         return sb.toString();
     }
 }
