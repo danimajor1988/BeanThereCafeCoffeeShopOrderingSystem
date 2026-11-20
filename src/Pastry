@@ -1,0 +1,22 @@
+package cafe;
+
+public class Pastry {
+    private String pastryName;
+    private int quantity;
+    private double unitPrice;
+
+    public Pastry(String pastryName, int quantity, double unitPrice) {
+        this.pastryName = pastryName;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+    }
+
+    public double getItemTotal() {
+        return unitPrice * quantity;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%dx %s - $%.2f", quantity, pastryName, getItemTotal());
+    }
+}
