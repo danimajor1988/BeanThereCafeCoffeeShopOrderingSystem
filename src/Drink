@@ -1,0 +1,89 @@
+package cafe;
+
+public class Drink {
+    private String drinkCategory;
+    private String drinkName;
+    private String size;
+    private String temperature;
+    private String milk;
+    private int extraShots;
+    private String syrup;
+    private String coldFoam;
+    private boolean whippedCream;
+    private boolean sprinkles;
+    private int quantity;
+    private double unitPrice;
+
+    public Drink(String drinkCategory, String drinkName, String size, String temperature,
+                 String milk, int extraShots, String syrup, String coldFoam,
+                 boolean whippedCream, boolean sprinkles, int quantity) {
+        this.drinkCategory = drinkCategory;
+        this.drinkName = drinkName;
+        this.size = size;
+        this.temperature = temperature;
+        this.milk = milk;
+        this.extraShots = extraShots;
+        this.syrup = syrup;
+        this.coldFoam = coldFoam;
+        this.whippedCream = whippedCream;
+        boolean isCoffeeOrMatcha = "Coffee".equalsIgnoreCase(drinkCategory) || "Matcha".equalsIgnoreCase(drinkCategory);
+        this.sprinkles = isCoffeeOrMatcha && sprinkles;
+        this.quantity = quantity;
+        this.unitPrice = calculatePrice();
+    }
+
+    public double calculatePrice() {
+        double price = 3.00; // Base price for Coffee and Matcha
+
+        if ("Tea".equalsIgnoreCase(drinkCategory)) {
+            price = 2.00;
+        }
+
+        // Size adjustments
+        if ("Medium".equalsIgnoreCase(size)) {
+            price += 0.50;
+        } else if ("Large".equalsIgnoreCase(size)) {
+            price += 1.00;
+        }
+
+        // Extra shots (+$1.00 each)
+        price += extraShots * 1.00;
+
+        // Syrups (+$0.70)
+        if (syrup != null && !"None".equalsIgnoreCase(syrup)) {
+            price += 0.70;
+        }
+
+        // Cold Foams (+$1.00)
+        if (coldFoam != null && !"None".equalsIgnoreCase(coldFoam)) {
+            price += 1.00;
+        }
+
+        // Whipped Cream (+$0.50)
+        if (whippedCream) {
+            price += 0.50;
+        }
+
+        // Sprinkles are FREE ($0.00) with Coffee/Matcha
+        this.unitPrice = price;
+        return this.unitPrice;
+    }
+
+    public double getItemTotal() {
+        return unitPrice * quantity;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%dx %s %s (%s) - $%.2f\n",
+                quantity, size, drinkName, temperature, getItemTotal()));
+        sb.append("   Milk: ").append(milk);
+        if (extraShots > 0) sb.append(" | +").append(extraShots).append(" shot(s)");
+        if (!"None".equalsIgnoreCase(syrup)) sb.append(" | Syrup: ").append(syrup);
+        if (!"None".equalsIgnoreCase(coldFoam)) sb.append(" | Cold Foam: ").append(coldFoam);
+        if (whippedCream) sb.append(" | Whipped Cream");
+        if (sprinkles) sb.append(" | Sprinkles (Free)");
+        return sb.toString();
+    }
+}
